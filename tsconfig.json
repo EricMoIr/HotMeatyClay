@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "removeComments": true,
+    "target": "esnext",
+    "outDir": "dist",
+    "sourceMap": true,
+    "baseUrl": "./src/",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true
+  },
+  "typeRoots": [
+    "./node_modules/@types",
+    "./node_modules/discord.js/typings"
+  ],  
+  "include": [
+    "./src/**/*.ts"
+  ]
+}
