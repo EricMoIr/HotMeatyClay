@@ -1,0 +1,16 @@
+{
+  "name": "hotmeatyclay",
+  "version": "1.0.0",
+  "description": "Discord bot for Undead Dawn",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://ericmordezki@bitbucket.org/ericmordezki/hotmeatyclay.git"
+  },
+  "author": "Meaty",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/ericmordezki/hotmeatyclay#readme"
+}
