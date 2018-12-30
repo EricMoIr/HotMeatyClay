@@ -1,19 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Discord = require("discord.js");
-const Logger_1 = require("Logger");
-const DiscordController = require("controllers/discord");
-const { DISCORD_TOKEN } = process.env;
+const express = require("express");
+const bodyParser = require("body-parser");
+const Logger_1 = require("utils/Logger");
+const UserController = require("controllers/user");
+const discord_1 = require("services/discord");
+const discordService = discord_1.default.instance;
+const { PORT } = process.env;
 const init = async () => {
-    const beginning = Date.now();
-    const client = new Discord.Client();
-    client.on("ready", async () => {
-        await DiscordController.ready();
-        Logger_1.default.log(`Starting the bot took ${(Date.now() - beginning) / 1000} seconds`);
+    await discordService.connect();
+    const app = express();
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: false }));
+    app.post("/user", UserController.createUser);
+    app.listen(PORT, () => {
+        Logger_1.default.log("API started listening");
     });
-    client.on("disconnect", (event) => DiscordController.disconnect(event, client, DISCORD_TOKEN));
-    client.on("error", (error) => DiscordController.error(error, client, DISCORD_TOKEN));
-    await DiscordController.signIn(client, DISCORD_TOKEN);
 };
 try {
     init();

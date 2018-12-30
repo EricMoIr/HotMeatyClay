@@ -1,6 +1,6 @@
 import { Client } from "discord.js";
 
-import Logger from "Logger";
+import Logger from "utils/Logger";
 
 export const ready = async () => {
     Logger.log("Bot is ready");
@@ -23,12 +23,3 @@ export const error = async (thrownError: Error, client: Client, token: string) =
         await error(err, client, token);
     }
 };
-
-export const signIn = async (client: Client, token: string) => {
-    try {
-        Logger.log("Attempting to connect to discord...");
-        await client.login(token);
-    } catch (error) {
-        Logger.error("Couldn't connect to discord", error);
-    }
-}
