@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Logger_1 = require("Logger");
+const Logger_1 = require("utils/Logger");
 exports.ready = async () => {
     Logger_1.default.log("Bot is ready");
 };
@@ -20,15 +20,6 @@ exports.error = async (thrownError, client, token) => {
     }
     catch (err) {
         await exports.error(err, client, token);
-    }
-};
-exports.signIn = async (client, token) => {
-    try {
-        Logger_1.default.log("Attempting to connect to discord...");
-        await client.login(token);
-    }
-    catch (error) {
-        Logger_1.default.error("Couldn't connect to discord", error);
     }
 };
 //# sourceMappingURL=discord.js.map

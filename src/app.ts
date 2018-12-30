@@ -1,25 +1,28 @@
-import * as Discord from "discord.js";
+import * as express from "express";
+import * as bodyParser from "body-parser";
 
-import Logger from "Logger";
-import * as DiscordController from "controllers/discord";
+import Logger from "utils/Logger";
+import * as UserController from "controllers/user";
+import discord from "services/discord";
 
-const { DISCORD_TOKEN } = process.env;
+const discordService = discord.instance;
+const { PORT } = process.env;
 
 const init = async () => {
-    const beginning = Date.now();
+    await discordService.connect();
+    
+    // #region Express config
+    const app = express();
 
-    const client = new Discord.Client();
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: false }));
 
-    //#region Discord config
-    client.on("ready", async () => {
-        await DiscordController.ready();
-        Logger.log(`Starting the bot took ${(Date.now() - beginning) / 1000} seconds`);
-    });
-    client.on("disconnect", (event) => DiscordController.disconnect(event, client, DISCORD_TOKEN));
-    client.on("error", (error) => DiscordController.error(error, client, DISCORD_TOKEN));
-    //#endregion
+    app.post("/user", UserController.createUser);
 
-    await DiscordController.signIn(client, DISCORD_TOKEN);
+    app.listen(PORT, () => {
+        Logger.log("API started listening");
+    })
+    // #endregion
 };
 
 try {

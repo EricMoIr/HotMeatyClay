@@ -5,7 +5,7 @@ function print(color, level, messages) {
         if (m instanceof Error) {
             return m.stack;
         }
-        return m;
+        return JSON.stringify(m);
     });
     const now = new Date().toLocaleString();
     const msg = `[${now}][${level}]: ${toPrint.join("\n")}`;
