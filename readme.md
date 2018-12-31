@@ -17,3 +17,28 @@
 3. Handle banned players
  * The bot must be able to remove access to all text and voice channels to banned players
  * The bot must be able to give them access to a special channel to discuss their situation
+
+## API
+
+POST /user
+
+### Request
+
+|Name|Type|Description|
+|-|-|-|
+|username|String|The new username the discord account will have. Basically, the IGN
+|discordId|String|The discord account's id
+
+### Response
+
+|Name|Type|Description|
+|-|-|-|
+|Error|String?|A description of the error that occurred
+
+### Posible return codes
+
+|Code|
+|-|
+|200|
+|400|
+|500|
