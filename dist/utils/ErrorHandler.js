@@ -4,8 +4,9 @@ const Logger_1 = require("./Logger");
 exports.sendError = (res, message, code) => {
     Logger_1.default.error(message);
     res.status(code);
-    return res.json({
+    res.json({
         error: message,
     });
+    return false;
 };
 //# sourceMappingURL=ErrorHandler.js.map

@@ -43,6 +43,46 @@ class DiscordService {
             return false;
         }
     }
+
+    handleBannedUser = async (discordId: string) => {
+        const guild = this.client.guilds.find(({ id }) => id === GUILD_ID);
+        if (!guild) {
+            Logger.error(`Couldn't find the guild ${GUILD_ID}`);
+            return false;
+        }
+        const toHandle = guild.members.find(({ id }) => id === discordId);
+        if (!toHandle) {
+            Logger.error(`Couldn't find the user ${discordId}`);
+            return false;
+        }
+
+        let role = guild.roles.find(({ name }) => name.toLowerCase().includes("banned"));
+        if (!role) {
+            Logger.warn(`Couldn't find the banned role. Attempting to create it...`);
+            role = await guild.createRole({
+                name: "Banned",
+            });
+            const promises = guild.channels.map((channel) => {
+                if (channel.name.toLocaleLowerCase().includes("ban")) {
+                    return channel.overwritePermissions(role, { "SEND_MESSAGES": true });
+                } 
+                return channel.overwritePermissions(role, { "SEND_MESSAGES": false, "SPEAK": false });
+            });
+            try {
+                await Promise.all(promises);
+            } catch(error) {
+                Logger.error(`Couldn't create the banned role`, error);
+                return false;
+            }
+        }
+        try {
+            await toHandle.addRole(role);
+            return true;
+        } catch (error) {
+            Logger.error(`Couldn't add the banned role to ${discordId}`, error);
+            return false;
+        }
+    }
 }
 
 export default DiscordService;

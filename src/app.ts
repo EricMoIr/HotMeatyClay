@@ -2,6 +2,7 @@ import * as express from "express";
 import * as bodyParser from "body-parser";
 
 import Logger from "utils/Logger";
+import logger from "middlewares/logger";
 import * as UserController from "controllers/user";
 import discord from "services/discord";
 
@@ -16,8 +17,10 @@ const init = async () => {
 
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(logger);
 
     app.post("/user", UserController.createUser);
+    app.put("/user", UserController.updateUser);
 
     app.listen(PORT, () => {
         Logger.log("API started listening");
