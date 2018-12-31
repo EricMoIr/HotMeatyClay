@@ -63,10 +63,11 @@ class DiscordService {
                 name: "Banned",
             });
             const promises = guild.channels.map((channel) => {
-                if (channel.name.toLocaleLowerCase().includes("ban")) {
-                    return channel.overwritePermissions(role, { "SEND_MESSAGES": true });
-                } 
-                return channel.overwritePermissions(role, { "SEND_MESSAGES": false, "SPEAK": false });
+                return channel.overwritePermissions(role, { 
+                    "SEND_MESSAGES": false,
+                    "SPEAK": false,
+                    "ADD_REACTIONS": false,
+                });
             });
             try {
                 await Promise.all(promises);
