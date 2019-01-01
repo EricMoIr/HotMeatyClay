@@ -7,12 +7,14 @@ const { DISCORD_TOKEN, GUILD_ID } = process.env;
 class DiscordService {
     constructor() {
         this.client = new discord_js_1.Client();
+        this.guild = null;
         this.connect = () => {
             return new Promise((resolve) => {
                 const beginning = Date.now();
                 this.client.on("ready", async () => {
                     await DiscordController.ready();
                     Logger_1.default.log(`Starting the bot took ${(Date.now() - beginning) / 1000} seconds`);
+                    this.initGuild();
                     resolve();
                 });
                 this.client.on("disconnect", (event) => DiscordController.disconnect(event, this.client, DISCORD_TOKEN));
@@ -20,13 +22,31 @@ class DiscordService {
                 this.client.login(DISCORD_TOKEN);
             });
         };
+        this.handleUser = async (username, discordId, isBanned) => {
+            let result = await this.renameMember(username, discordId);
+            if (!result) {
+                return "Couldn't rename member. The bot is probably missing permissions.";
+            }
+            if (isBanned) {
+                result = await this.handleBannedUser(discordId);
+                if (!result) {
+                    return "Couldn't handle banned user. The bot is probably missing permissions.";
+                }
+            }
+            return null;
+        };
+        this.initGuild = () => {
+            this.guild = this.client.guilds.find(({ id }) => id === GUILD_ID);
+            if (!this.guild) {
+                Logger_1.default.error(`Couldn't initialize the guild`);
+            }
+        };
         this.renameMember = async (username, discordId) => {
-            const guild = this.client.guilds.find(({ id }) => id === GUILD_ID);
-            if (!guild) {
-                Logger_1.default.error(`Couldn't find the guild ${GUILD_ID}`);
+            if (!this.guild) {
+                Logger_1.default.error(`The guild wasn't initialized`);
                 return false;
             }
-            const toRename = guild.members.find(({ id }) => id === discordId);
+            const toRename = this.guild.members.find(({ id }) => id === discordId);
             if (!toRename) {
                 Logger_1.default.error(`Couldn't find the user ${discordId}`);
                 return false;
@@ -41,27 +61,27 @@ class DiscordService {
             }
         };
         this.handleBannedUser = async (discordId) => {
-            const guild = this.client.guilds.find(({ id }) => id === GUILD_ID);
-            if (!guild) {
-                Logger_1.default.error(`Couldn't find the guild ${GUILD_ID}`);
+            if (!this.guild) {
+                Logger_1.default.error(`The guild wasn't initialized`);
                 return false;
             }
-            const toHandle = guild.members.find(({ id }) => id === discordId);
+            const toHandle = this.guild.members.find(({ id }) => id === discordId);
             if (!toHandle) {
                 Logger_1.default.error(`Couldn't find the user ${discordId}`);
                 return false;
             }
-            let role = guild.roles.find(({ name }) => name.toLowerCase().includes("banned"));
+            let role = this.guild.roles.find(({ name }) => name.toLowerCase().includes("banned"));
             if (!role) {
                 Logger_1.default.warn(`Couldn't find the banned role. Attempting to create it...`);
-                role = await guild.createRole({
+                role = await this.guild.createRole({
                     name: "Banned",
                 });
-                const promises = guild.channels.map((channel) => {
-                    if (channel.name.toLocaleLowerCase().includes("ban")) {
-                        return channel.overwritePermissions(role, { "SEND_MESSAGES": true });
-                    }
-                    return channel.overwritePermissions(role, { "SEND_MESSAGES": false, "SPEAK": false });
+                const promises = this.guild.channels.map((channel) => {
+                    return channel.overwritePermissions(role, {
+                        "SEND_MESSAGES": false,
+                        "SPEAK": false,
+                        "ADD_REACTIONS": false,
+                    });
                 });
                 try {
                     await Promise.all(promises);

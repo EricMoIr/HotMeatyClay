@@ -6,7 +6,9 @@ const Logger_1 = require("utils/Logger");
 const logger_1 = require("middlewares/logger");
 const UserController = require("controllers/user");
 const discord_1 = require("services/discord");
+const game = require("services/game");
 const discordService = discord_1.default.instance;
+const gameService = game;
 const { PORT } = process.env;
 const init = async () => {
     await discordService.connect();
@@ -19,6 +21,7 @@ const init = async () => {
     app.listen(PORT, () => {
         Logger_1.default.log("API started listening");
     });
+    await gameService.startUpdating();
 };
 try {
     init();

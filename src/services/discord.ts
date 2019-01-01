@@ -8,6 +8,7 @@ const { DISCORD_TOKEN, GUILD_ID } = process.env;
 class DiscordService {
     static instance = new DiscordService();
     client = new Client();
+    guild = null;
 
     connect = () => {
         return new Promise((resolve) => {
@@ -15,6 +16,7 @@ class DiscordService {
             this.client.on("ready", async () => {
                 await DiscordController.ready();
                 Logger.log(`Starting the bot took ${(Date.now() - beginning) / 1000} seconds`);
+                this.initGuild();
                 resolve();
             });
             this.client.on("disconnect", (event) => DiscordController.disconnect(event, this.client, DISCORD_TOKEN));
@@ -24,13 +26,33 @@ class DiscordService {
         });
     };
 
-    renameMember = async (username: string, discordId: string) => {
-        const guild = this.client.guilds.find(({ id }) => id === GUILD_ID);
-        if (!guild) {
-            Logger.error(`Couldn't find the guild ${GUILD_ID}`);
+    handleUser = async (username: string, discordId: string, isBanned?: boolean) => {
+        let result = await this.renameMember(username, discordId);
+        if (!result) {
+            return "Couldn't rename member. The bot is probably missing permissions.";
+        }
+        if (isBanned) {
+            result = await this.handleBannedUser(discordId);
+            if (!result) {
+                return "Couldn't handle banned user. The bot is probably missing permissions.";
+            }
+        }
+        return null;
+    }
+
+    private initGuild = () => {
+        this.guild = this.client.guilds.find(({ id }) => id === GUILD_ID);
+        if (!this.guild) {
+            Logger.error(`Couldn't initialize the guild`);
+        }
+    }
+
+    private renameMember = async (username: string, discordId: string) => {
+        if (!this.guild) {
+            Logger.error(`The guild wasn't initialized`);
             return false;
         }
-        const toRename = guild.members.find(({ id }) => id === discordId);
+        const toRename = this.guild.members.find(({ id }) => id === discordId);
         if (!toRename) {
             Logger.error(`Couldn't find the user ${discordId}`);
             return false;
@@ -44,25 +66,24 @@ class DiscordService {
         }
     }
 
-    handleBannedUser = async (discordId: string) => {
-        const guild = this.client.guilds.find(({ id }) => id === GUILD_ID);
-        if (!guild) {
-            Logger.error(`Couldn't find the guild ${GUILD_ID}`);
+    private handleBannedUser = async (discordId: string) => {
+        if (!this.guild) {
+            Logger.error(`The guild wasn't initialized`);
             return false;
         }
-        const toHandle = guild.members.find(({ id }) => id === discordId);
+        const toHandle = this.guild.members.find(({ id }) => id === discordId);
         if (!toHandle) {
             Logger.error(`Couldn't find the user ${discordId}`);
             return false;
         }
 
-        let role = guild.roles.find(({ name }) => name.toLowerCase().includes("banned"));
+        let role = this.guild.roles.find(({ name }) => name.toLowerCase().includes("banned"));
         if (!role) {
             Logger.warn(`Couldn't find the banned role. Attempting to create it...`);
-            role = await guild.createRole({
+            role = await this.guild.createRole({
                 name: "Banned",
             });
-            const promises = guild.channels.map((channel) => {
+            const promises = this.guild.channels.map((channel) => {
                 return channel.overwritePermissions(role, { 
                     "SEND_MESSAGES": false,
                     "SPEAK": false,

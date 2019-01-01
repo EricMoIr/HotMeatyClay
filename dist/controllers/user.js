@@ -17,7 +17,7 @@ exports.createUser = async (req, res) => {
         return;
     }
     const { username, isBanned, discordId } = req.body;
-    const error = await handleUser(username, discordId, isBanned);
+    const error = await discordService.handleUser(username, discordId, isBanned);
     if (error) {
         return ErrorHandler_1.sendError(res, error, 500);
     }
@@ -32,23 +32,10 @@ exports.updateUser = async (req, res) => {
     }
     const { username, isBanned } = req.body;
     const { id } = req.params;
-    const error = await handleUser(username, id, isBanned);
+    const error = await discordService.handleUser(username, id, isBanned);
     if (error) {
         return ErrorHandler_1.sendError(res, error, 500);
     }
     return res.json();
 };
-async function handleUser(username, discordId, isBanned) {
-    let result = await discordService.renameMember(username, discordId);
-    if (!result) {
-        return "Couldn't rename member. The bot is probably missing permissions.";
-    }
-    if (isBanned) {
-        result = await discordService.handleBannedUser(discordId);
-        if (!result) {
-            return "Couldn't handle banned user. The bot is probably missing permissions.";
-        }
-    }
-    return null;
-}
 //# sourceMappingURL=user.js.map

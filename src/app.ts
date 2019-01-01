@@ -5,8 +5,10 @@ import Logger from "utils/Logger";
 import logger from "middlewares/logger";
 import * as UserController from "controllers/user";
 import discord from "services/discord";
+import * as game from "services/game";
 
 const discordService = discord.instance;
+const gameService = game;
 const { PORT } = process.env;
 
 const init = async () => {
@@ -26,6 +28,8 @@ const init = async () => {
         Logger.log("API started listening");
     })
     // #endregion
+
+    await gameService.startUpdating();
 };
 
 try {
