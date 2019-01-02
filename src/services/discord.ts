@@ -21,6 +21,7 @@ class DiscordService {
             });
             this.client.on("disconnect", (event) => DiscordController.disconnect(event, this.client, DISCORD_TOKEN));
             this.client.on("error", (error) => DiscordController.error(error, this.client, DISCORD_TOKEN));
+            this.client.on("guildMemberAdd", (newMember) => DiscordController.guildMemberAdd(newMember));
 
             this.client.login(DISCORD_TOKEN);
         });

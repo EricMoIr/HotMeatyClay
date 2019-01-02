@@ -33,13 +33,21 @@ const fetch = async (uri: string, body: object) => {
     }
 };
 
-export const updateUserInfo = async (discordid: string) => {
+export const getUserInfo = async (discordid: string) => {
     const body = {
         discordid,
         quickkey: GAME_TOKEN,
         action: "user",
     };
-    const { banned, name, prefix, member, error } = await fetch(GAME_URI + USER_DATA_URI, body);
+    const { error, ...rest } = await fetch(GAME_URI + USER_DATA_URI, body);
+    if (error) {
+        return { error };
+    }
+    return rest;
+}
+
+export const updateUserInfo = async (discordid: string) => {
+    const { banned, name, prefix, member, error } = await getUserInfo(discordid);
     if (error) {
         return { error };
     }

@@ -1,6 +1,10 @@
-import { Client } from "discord.js";
+import { Client, GuildMember } from "discord.js";
 
 import Logger from "utils/Logger";
+import discord from "services/discord";
+import * as gameService from "services/game";
+
+const discordService = discord.instance;
 
 export const ready = async () => {
     Logger.log("Bot is ready");
@@ -23,3 +27,15 @@ export const error = async (thrownError: Error, client: Client, token: string) =
         await error(err, client, token);
     }
 };
+
+export const guildMemberAdd = async (newMember: GuildMember) => {
+    const { banned, name, prefix, member, error } = await gameService.getUserInfo(newMember.id);
+    if (error) {
+        Logger.warn(error);
+        return;
+    }
+    const serviceError = await discordService.handleUser(name, newMember.id, banned);
+    if (serviceError) {
+        Logger.error(serviceError);
+    }
+}

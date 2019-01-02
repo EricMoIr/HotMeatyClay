@@ -18,15 +18,20 @@ Why 402653200 as permissions? This bot requires
 
 ## Requirements
 1. Rename members
- * The bot must be able to rename every linked member to their respective IGNs
+    * The bot must be able to rename every linked member to their respective IGNs
 
 2. Allow voice chat to linked members
- * The bot must be able to allow access to voice chat only to the members who are linked
+    * The bot must be able to allow access to voice chat only to the members who are linked
 
 3. Handle banned players
- * The bot must be able to remove access to all text and voice channels to banned players
- * The bot must be able to give them access to a special channel to discuss their situation
+    * The bot must be able to remove access to all text and voice channels to banned players
+    * The bot must be able to give them access to a special channel to discuss their situation
 
+4. Handle new members
+    * The bot must be able to fulfill the above requirements not only on the current members but also on all new members joining the guild
+
+5. Announcements (planned)
+    * The bot must be able to announce the winners and/or top placed players of the major competitions
 ## API
 
 POST /user
