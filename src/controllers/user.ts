@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 
-import discord from "services/discord";
+import DiscordService from "services/DiscordService";
 import { sendError } from "utils/ErrorHandler";
 
-const discordService = discord.instance;
+const discordService = DiscordService.instance;
 
 function validateRequest(res: Response, predicate: (...any) => boolean, ...args) {
     if (!predicate(...args)) {

@@ -1,31 +1,22 @@
-import { Client } from "discord.js";
+import { Client, Guild } from "discord.js";
 
-import * as DiscordController from "controllers/discord";
 import Logger from "utils/Logger";
 
-const { DISCORD_TOKEN, GUILD_ID } = process.env;
+const { GUILD_ID } = process.env;
 
 class DiscordService {
-    static instance = new DiscordService();
-    client = new Client();
-    guild = null;
+    static instance: DiscordService;
+    client: Client;
+    guild: Guild;
 
-    connect = () => {
-        return new Promise((resolve) => {
-            const beginning = Date.now();
-            this.client.on("ready", async () => {
-                await DiscordController.ready();
-                Logger.log(`Starting the bot took ${(Date.now() - beginning) / 1000} seconds`);
-                this.initGuild();
-                resolve();
-            });
-            this.client.on("disconnect", (event) => DiscordController.disconnect(event, this.client, DISCORD_TOKEN));
-            this.client.on("error", (error) => DiscordController.error(error, this.client, DISCORD_TOKEN));
-            this.client.on("guildMemberAdd", (newMember) => DiscordController.guildMemberAdd(newMember));
+    static setInstance(client: Client) {
+        DiscordService.instance = new DiscordService(client);
+    }
 
-            this.client.login(DISCORD_TOKEN);
-        });
-    };
+    private constructor(client: Client) {
+        this.client = client;
+        this.guild;
+    }
 
     handleUser = async (username: string, discordId: string, isBanned?: boolean) => {
         let result = await this.renameMember(username, discordId);

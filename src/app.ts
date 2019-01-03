@@ -1,34 +1,18 @@
-import * as express from "express";
-import * as bodyParser from "body-parser";
-
 import Logger from "utils/Logger";
-import logger from "middlewares/logger";
-import * as UserController from "controllers/user";
-import discord from "services/discord";
-import * as game from "services/game";
+import * as ApiWorker from "workers/ApiWorker";
+import DiscordService from "services/DiscordService";
+import DiscordWorker from "workers/DiscordWorker";
+import GameService from "services/GameService";
+import { Client } from "discord.js";
 
-const discordService = discord.instance;
-const gameService = game;
-const { PORT } = process.env;
 
 const init = async () => {
-    await discordService.connect();
-    
-    // #region Express config
-    const app = express();
+    const client = new Client();
+    DiscordService.setInstance(client);
+    await DiscordWorker.login();
+    await ApiWorker.listen();
 
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({ extended: false }));
-    app.use(logger);
-
-    app.post("/user", UserController.createUser);
-    app.put("/user", UserController.updateUser);
-
-    app.listen(PORT, () => {
-        Logger.log("API started listening");
-    })
-    // #endregion
-
+    const gameService = new GameService(DiscordService.instance);
     await gameService.startUpdating();
 };
 
