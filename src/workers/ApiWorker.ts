@@ -7,7 +7,7 @@ import * as UserController from "controllers/user";
 
 const { PORT } = process.env;
 
-export function listen() {
+export function start() {
     return new Promise((resolve) => {
         const app = express();
         
