@@ -17,6 +17,7 @@ class DiscordController {
 
     async ready() {
         Logger.log("Bot is ready");
+        DiscordService.instance.initGuild();
     };
     
     async disconnect(_, token: string) {

@@ -12,9 +12,6 @@ abstract class DiscordWorker {
 
         DiscordService.setInstance(client);
 
-        const gameService = new GameService(DiscordService.instance);
-        await gameService.startUpdating();
-
         const beginning = Date.now();
         
         const controller = new DiscordController(DiscordService.instance);
@@ -27,6 +24,9 @@ abstract class DiscordWorker {
         client.on("guildMemberAdd", (newMember) => controller.guildMemberAdd(newMember));
 
         await client.login(DISCORD_TOKEN);
+
+        const gameService = new GameService(DiscordService.instance);
+        await gameService.startUpdating();
     }
 }
 

@@ -7,8 +7,10 @@ import DiscordService from "services/DiscordService";
 const { GAME_TOKEN } = process.env;
 
 const DAILY = 1000 * 60 * 60 * 24;
-const GAME_URI = "https://system.undeaddawn.com/discord/";
-const USER_DATA_URI = "getuserdata.php";
+const GAME_URI = "https://system.undeaddawn.com/discord";
+// const GAME_URI = "http://localhost:8081";
+const USER_DATA_URI = "/getuserdata.php";
+// const USER_DATA_URI = "/user";
 
 const fetch = async (uri: string, body: object) => {
     try {

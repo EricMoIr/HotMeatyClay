@@ -15,7 +15,6 @@ class DiscordService {
 
     private constructor(client: Client) {
         this.client = client;
-        this.guild;
     }
 
     handleUser = async (username: string, discordId: string, isBanned?: boolean) => {
@@ -32,7 +31,7 @@ class DiscordService {
         return null;
     }
 
-    private initGuild = () => {
+    initGuild = () => {
         this.guild = this.client.guilds.find(({ id }) => id === GUILD_ID);
         if (!this.guild) {
             Logger.error(`Couldn't initialize the guild`);
