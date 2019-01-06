@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
+    "build": "yarn run tsc",
     "start": "node dist/index.js",
-    "brun": "yarn build && yarn start"
+    "brun": "yarn build && yarn start",
+    "tsc": "./node_modules/typescript/bin/tsc"
   },
   "repository": {
     "type": "git",
