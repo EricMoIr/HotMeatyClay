@@ -6,6 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
+    "web": "node dist/index.web.js",
+    "worker": "node dist/index.worker.js",
     "heroku-postbuild": "yarn build",
     "brun": "yarn build && yarn start"
   },
