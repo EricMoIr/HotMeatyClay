@@ -1,1 +1,1 @@
-worker: npm run brun
+worker: yarn start
