@@ -2,7 +2,7 @@
 
 ## Invite link
 
-https://discordapp.com/oauth2/authorize?client_id=<client_id>&scope=bot&permissions=402653200
+https://discordapp.com/oauth2/authorize?client_id=529867216590602251&scope=bot&permissions=402653200
 
 Why 402653200 as permissions? This bot requires
 - Manage roles to create the Banned role
