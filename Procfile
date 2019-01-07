@@ -1,1 +1,2 @@
-worker: npm run brun
+worker: yarn run worker
+web: yarn run web

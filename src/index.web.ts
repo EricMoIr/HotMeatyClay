@@ -1,3 +1,3 @@
 require("module-alias/register");
 require("dotenv").config();
-require("app.mock");
+require("app.web");
