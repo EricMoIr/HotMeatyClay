@@ -3,8 +3,6 @@ import { Request, Response } from "express";
 import DiscordService from "services/DiscordService";
 import { sendError } from "utils/ErrorHandler";
 
-const discordService = DiscordService.instance;
-
 function validateRequest(res: Response, predicate: (...any) => boolean, ...args) {
     if (!predicate(...args)) {
         return sendError(res, "Request not valid. Read the docs. I wrote them for you, nab.", 400);
@@ -22,7 +20,7 @@ export const createUser = async (req: Request, res: Response) => {
     }
 
     const { username, isBanned, discordId } = req.body;
-    const error = await discordService.handleUser(username, discordId, isBanned);
+    const error = await DiscordService.instance.handleUser(username, discordId, isBanned);
     if (error) {
         return sendError(res, error, 500);
     }
@@ -40,7 +38,7 @@ export const updateUser = async (req: Request, res: Response) => {
 
     const { username, isBanned } = req.body;
     const { id } = req.params;
-    const error = await discordService.handleUser(username, id, isBanned);
+    const error = await DiscordService.instance.handleUser(username, id, isBanned);
     if (error) {
         return sendError(res, error, 500);
     }
