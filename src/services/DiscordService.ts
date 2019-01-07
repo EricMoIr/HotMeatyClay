@@ -18,6 +18,9 @@ class DiscordService {
     }
 
     handleUser = async (username: string, discordId: string, isBanned?: boolean) => {
+        if (!this.canHandleUser(discordId)) {
+            return null;
+        }
         let result = await this.renameMember(username, discordId);
         if (!result) {
             return "Couldn't rename member. The bot is probably missing permissions.";
@@ -28,11 +31,48 @@ class DiscordService {
                 return "Couldn't handle banned user. The bot is probably missing permissions.";
             }
         }
+        result = await this.addVerifiedRole(discordId);
+        if (!result) {
+            return "Couldn't give the verified role. The bot is probably missing permissions.";
+        }
         return null;
     }
 
+    canHandleUser = (discordId) => {
+        const user = this.guild.members.get(discordId);
+        if (!user) {
+            Logger.warn("The member doesn't exist");
+            return false;
+        }
+        return !user.roles.find((role) => role.name === "Devs");
+    }
+
+    addVerifiedRole = async (discordId) => {
+        const user = this.guild.members.get(discordId);
+        if (!user) {
+            Logger.warn("The member doesn't exist");
+            return false;
+        }
+
+        const role = this.guild.roles.find((role) => role.name === "Verified");
+        if (!role) {
+            Logger.warn("The Verified role doesn't exist");
+            return false;
+        }
+        if (user.roles.has(role.id)) {
+            return true;
+        }
+        try {
+            await user.addRole(role);
+            return true;
+        } catch (error) {
+            Logger.error(error);
+            return false;
+        }
+    }
+
     initGuild = () => {
-        this.guild = this.client.guilds.find(({ id }) => id === GUILD_ID);
+        this.guild = this.client.guilds.get(GUILD_ID);
         if (!this.guild) {
             Logger.error(`Couldn't initialize the guild`);
         }
@@ -43,7 +83,7 @@ class DiscordService {
             Logger.error(`The guild wasn't initialized`);
             return false;
         }
-        const toRename = this.guild.members.find(({ id }) => id === discordId);
+        const toRename = this.guild.members.get(discordId);
         if (!toRename) {
             Logger.error(`Couldn't find the user ${discordId}`);
             return false;
@@ -62,7 +102,7 @@ class DiscordService {
             Logger.error(`The guild wasn't initialized`);
             return false;
         }
-        const toHandle = this.guild.members.find(({ id }) => id === discordId);
+        const toHandle = this.guild.members.get(discordId);
         if (!toHandle) {
             Logger.error(`Couldn't find the user ${discordId}`);
             return false;
