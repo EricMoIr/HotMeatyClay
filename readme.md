@@ -34,6 +34,8 @@ Why 402653200 as permissions? This bot requires
     * The bot must be able to announce the winners and/or top placed players of the major competitions
 ## API
 
+https://hot-meaty-clay.herokuapp.com
+
 POST /user
 
 ### Request
