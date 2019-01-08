@@ -21,7 +21,8 @@ abstract class DiscordWorker {
         });
         client.on("disconnect", (event) => controller.disconnect(event, DISCORD_TOKEN));
         client.on("error", (error) => controller.error(error, DISCORD_TOKEN));
-        client.on("guildMemberAdd", (newMember) => controller.guildMemberAdd(newMember));
+        client.on("guildMemberAdd", controller.guildMemberAdd);
+        client.on("message", controller.message)
 
         await client.login(DISCORD_TOKEN);
 
