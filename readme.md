@@ -2,12 +2,13 @@
 
 ## Invite link
 
-https://discordapp.com/oauth2/authorize?client_id=529867216590602251&scope=bot&permissions=402653200
+https://discordapp.com/oauth2/authorize?client_id=529867216590602251&scope=bot&permissions=402661392
 
-Why 402653200 as permissions? This bot requires
+Why 402661392 as permissions? This bot requires
 - Manage roles to create the Banned role
 - Manage channels to make the Banned role affect every channel
 - Manage nicknames to change them to the IGN
+- Mannage messages to delete messages with $purge
 
 ## Glossary
 
