@@ -33,6 +33,12 @@ Why 402661392 as permissions? This bot requires
 
 5. Announcements (planned)
     * The bot must be able to announce the winners and/or top placed players of the major competitions
+
+6. Delete messages
+    * The bot must be able to delete the n oldest messages with the command $purge n
+    * Only Devs and Mods should be able to use this command
+    * A Mod should not be able to delete a message written by a Dev
+
 ## API
 
 https://hot-meaty-clay.herokuapp.com
