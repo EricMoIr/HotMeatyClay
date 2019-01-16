@@ -89,7 +89,9 @@ class DiscordService {
             return false;
         }
         try {
-            await toRename.setNickname(username);
+            const possibleUsername = `${toRename.user.username} (${username})`;
+            const newUsername = possibleUsername.length > 32 ? username : possibleUsername;
+            await toRename.setNickname(newUsername);
             return true;
         } catch (error) {
             Logger.error(`Couldn't rename ${discordId} to ${username}`, error);
